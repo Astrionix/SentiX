@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>SentimiX - AI Sentiment Analyzer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      .bg-gradient-main {
+        background: radial-gradient(circle at top left, #4f46e5, transparent 55%),
+          radial-gradient(circle at bottom right, #a855f7, transparent 55%),
+          radial-gradient(circle at top right, #0ea5e9, transparent 60%),
+          #020617;
+      }
+      .glass-card {
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        background: linear-gradient(
+          135deg,
+          rgba(15, 23, 42, 0.8),
+          rgba(15, 23, 42, 0.55)
+        );
+        border: 1px solid rgba(148, 163, 184, 0.35);
+      }
+      .glass-pill {
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        background: linear-gradient(
+          135deg,
+          rgba(15, 23, 42, 0.9),
+          rgba(15, 23, 42, 0.7)
+        );
+        border: 1px solid rgba(148, 163, 184, 0.35);
+      }
+      .logo-glow {
+        box-shadow: 0 0 24px rgba(129, 140, 248, 0.8);
+      }
+      .fade-in-up {
+        animation: fade-in-up 0.7s ease-out forwards;
+      }
+      @keyframes fade-in-up {
+        from {
+          opacity: 0;
+          transform: translateY(12px) scale(0.98);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+      .spin-slow {
+        animation: spin 1.4s linear infinite;
+      }
+      .btn-ripple {
+        position: relative;
+        overflow: hidden;
+      }
+      .btn-ripple::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 9999px;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.3), transparent 55%);
+        transform: scale(0);
+        opacity: 0;
+        transition: transform 0.45s ease-out, opacity 0.45s ease-out;
+      }
+      .btn-ripple:active::after {
+        transform: scale(2.1);
+        opacity: 1;
+      }
+      .sentiment-card-enter {
+        animation: sentiment-enter 0.45s ease-out forwards;
+      }
+      @keyframes sentiment-enter {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body class="min-h-screen bg-gradient-main text-slate-100">
+    <div class="min-h-screen flex items-center justify-center px-4 py-10">
+      <!-- Main card -->
+      <div
+        class="glass-card w-full max-w-3xl rounded-3xl shadow-2xl shadow-slate-900/60 border border-slate-700/60 px-6 sm:px-10 py-6 sm:py-8 fade-in-up"
+      >
+        <!-- Logo + Tagline -->
+        <div
+          class="flex flex-col items-center gap-4 mb-6 sm:mb-8 text-center"
+        >
+          <!-- Logo -->
+          <div
+            class="flex items-center justify-center p-[2px] rounded-2xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-sky-400 logo-glow"
+          >
+            <div
+              class="glass-pill rounded-2xl px-4 py-2 flex items-center gap-3"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 48 48"
+                class="w-9 h-9 text-indigo-200"
+              >
+                <defs>
+                  <linearGradient
+                    id="sentimix-gradient"
+                    x1="0%"
+                    y1="0%"
+                    x2="100%"
+                    y2="100%"
+                  >
+                    <stop offset="0%" stop-color="#6366f1" />
+                    <stop offset="45%" stop-color="#a855f7" />
+                    <stop offset="100%" stop-color="#0ea5e9" />
+                  </linearGradient>
+                </defs>
+                <!-- Outer rounded shape -->
+                <rect
+                  x="4"
+                  y="6"
+                  width="40"
+                  height="36"
+                  rx="14"
+                  fill="url(#sentimix-gradient)"
+                  opacity="0.9"
+                />
+                <!-- Wave / sentiment line -->
+                <path
+                  d="M9 26c3.5 0 4.5-6 8-6s4.5 8 8 8 4.5-10 8-10 3.3 5 6 5"
+                  fill="none"
+                  stroke="white"
+                  stroke-width="2.3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <!-- Dot pulse -->
+                <circle
+                  cx="35"
+                  cy="19"
+                  r="2.3"
+                  fill="white"
+                  class="animate-pulse"
+                />
+              </svg>
+              <div class="flex flex-col">
+                <span
+                  class="text-lg sm:text-xl font-semibold tracking-tight text-slate-50"
+                  >SentimiX</span
+                >
+                <span class="text-[11px] uppercase tracking-[0.18em] text-slate-400"
+                  >AI Sentiment</span
+                >
+              </div>
+            </div>
+          </div>
+          <p class="text-sm sm:text-base text-slate-300 max-w-xl">
+            AI-Powered Sentiment Analyzer
+          </p>
+        </div>
+
+        <!-- Input section -->
+        <div class="space-y-3 mb-6">
+          <div class="flex items-center justify-between gap-2">
+            <label
+              for="text-input"
+              class="text-xs font-medium tracking-wide uppercase text-slate-300"
+              >Input text</label
+            >
+            <span class="text-[11px] text-slate-400"
+              >Code-mixed, multilingual, informal text welcome</span
+            >
+          </div>
+          <div
+            class="relative rounded-2xl border border-slate-600/70 bg-slate-900/40 shadow-inner shadow-slate-900/80 focus-within:border-indigo-400/80 focus-within:shadow-[0_0_0_1px_rgba(129,140,248,0.7)] transition-all duration-200"
+          >
+            <textarea
+              id="text-input"
+              class="w-full h-36 sm:h-40 resize-none bg-transparent outline-none text-sm sm:text-base text-slate-50 placeholder:text-slate-500 px-4 pt-4 pb-10"
+              placeholder="Type code-mixed text… e.g., 'Movie acchi thi but ending weak thi'"
+            ></textarea>
+            <div
+              class="absolute bottom-2 right-3 text-[10px] text-slate-500 select-none"
+            >
+              Press Analyze to run SentimiX
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions row -->
+        <div class="flex flex-col sm:flex-row sm:items-center gap-3 mb-4">
+          <button
+            id="analyze-btn"
+            class="btn-ripple inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-gradient-to-r from-purple-500 via-indigo-500 to-sky-500 text-sm font-semibold text-white shadow-lg shadow-purple-700/40 hover:shadow-purple-500/60 hover:scale-[1.03] active:scale-95 transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 focus-visible:ring-indigo-400"
+          >
+            <span class="mr-2">Analyze Sentiment</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              class="w-4 h-4"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M10.293 3.293a1 1 0 011.414 0l5 5a1 1 0 01-1.414 1.414L11 6.414V16a1 1 0 11-2 0V6.414L4.707 9.707A1 1 0 013.293 8.293l5-5z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </button>
+          <p class="text-xs text-slate-400">
+            Sentiment is returned as
+            <span class="font-semibold text-slate-200">positive</span>,
+            <span class="font-semibold text-slate-200">negative</span> or
+            <span class="font-semibold text-slate-200">neutral</span>, with a
+            confidence score between 0 and 1.
+          </p>
+        </div>
+
+        <!-- Error text -->
+        <p
+          id="error"
+          class="text-xs text-rose-300 min-h-[1.2rem]"
+        ></p>
+
+        <!-- Sentiment result card -->
+        <div
+          id="result-container"
+          class="mt-4 hidden"
+        >
+          <div
+            id="result-card"
+            class="glass-card rounded-2xl border border-slate-600/70 px-4 py-3 sm:px-5 sm:py-4 flex items-start gap-3 sentiment-card-enter"
+          >
+            <div
+              id="sentiment-icon-wrapper"
+              class="mt-[2px] flex h-9 w-9 items-center justify-center rounded-full bg-slate-900/70 border border-slate-500/70"
+            >
+              <span id="sentiment-emoji" class="text-lg">🙂</span>
+            </div>
+            <div class="flex-1">
+              <div class="flex flex-wrap items-center gap-2 mb-1">
+                <span
+                  id="sentiment-text"
+                  class="text-sm sm:text-base font-semibold capitalize text-slate-50"
+                  >Sentiment</span
+                >
+                <span
+                  id="confidence-text"
+                  class="text-xs rounded-full px-2 py-0.5 border border-slate-500/70 bg-slate-900/60 text-slate-200"
+                  >Confidence: 0.00</span
+                >
+              </div>
+              <p class="text-xs text-slate-400"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading overlay -->
+    <div
+      id="loading-overlay"
+      class="fixed inset-0 bg-slate-950/50 backdrop-blur-sm flex items-center justify-center z-20 hidden"
+    >
+      <div class="flex flex-col items-center gap-3">
+        <div
+          class="relative w-12 h-12 flex items-center justify-center rounded-full border border-indigo-400/40 bg-slate-900/80 shadow-lg shadow-slate-900/80"
+        >
+          <div
+            class="absolute inset-1 rounded-full border-2 border-transparent border-t-indigo-400 border-l-purple-400 spin-slow"
+          ></div>
+          <div class="w-3 h-3 rounded-full bg-indigo-400"></div>
+        </div>
+        <p class="text-xs text-slate-200 tracking-wide">
+          Analyzing sentiment with SentimiX…
+        </p>
+      </div>
+    </div>
+
+    <script>
+      const analyzeBtn = document.getElementById("analyze-btn");
+      const textInput = document.getElementById("text-input");
+      const errorEl = document.getElementById("error");
+      const loadingOverlay = document.getElementById("loading-overlay");
+      const resultContainer = document.getElementById("result-container");
+      const resultCard = document.getElementById("result-card");
+      const sentimentText = document.getElementById("sentiment-text");
+      const confidenceText = document.getElementById("confidence-text");
+      const sentimentEmoji = document.getElementById("sentiment-emoji");
+
+      function setLoading(isLoading) {
+        if (isLoading) {
+          loadingOverlay.classList.remove("hidden");
+          analyzeBtn.disabled = true;
+          analyzeBtn.classList.add("opacity-70", "cursor-not-allowed");
+        } else {
+          loadingOverlay.classList.add("hidden");
+          analyzeBtn.disabled = false;
+          analyzeBtn.classList.remove("opacity-70", "cursor-not-allowed");
+        }
+      }
+
+      function sentimentStyles(sentiment) {
+        switch (sentiment) {
+          case "positive":
+            return {
+              classes:
+                "border-emerald-400/60 bg-emerald-500/10 shadow-[0_0_40px_rgba(16,185,129,0.35)]",
+              emoji: "😊",
+            };
+          case "negative":
+            return {
+              classes:
+                "border-rose-400/60 bg-rose-500/10 shadow-[0_0_40px_rgba(248,113,113,0.35)]",
+              emoji: "😞",
+            };
+          case "neutral":
+          default:
+            return {
+              classes:
+                "border-amber-300/60 bg-amber-400/10 shadow-[0_0_40px_rgba(251,191,36,0.35)]",
+              emoji: "😐",
+            };
+        }
+      }
+
+      analyzeBtn.addEventListener("click", async () => {
+        const text = textInput.value.trim();
+        errorEl.textContent = "";
+        resultContainer.classList.add("hidden");
+
+        if (!text) {
+          errorEl.textContent = "Please enter some text to analyze.";
+          return;
+        }
+
+        setLoading(true);
+
+        try {
+          const response = await fetch("http://127.0.0.1:8000/analyze", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ text }),
+          });
+
+          if (!response.ok) {
+            let msg = "Unknown error from API";
+            try {
+              const err = await response.json();
+              if (err && err.detail) {
+                msg = err.detail;
+              }
+            } catch (e) {
+              // ignore JSON parse error
+            }
+            throw new Error(msg);
+          }
+
+          const data = await response.json();
+          const sentiment = (data.sentiment || "").toLowerCase();
+          const confidence = Number(data.confidence || 0);
+
+          const style = sentimentStyles(sentiment);
+
+          resultCard.className =
+            "glass-card rounded-2xl px-4 py-3 sm:px-5 sm:py-4 flex items-start gap-3 sentiment-card-enter " +
+            style.classes;
+
+          sentimentText.textContent = sentiment || "Unknown";
+          confidenceText.textContent = "Confidence: " + confidence.toFixed(3);
+          sentimentEmoji.textContent = style.emoji;
+
+          resultContainer.classList.remove("hidden");
+        } catch (e) {
+          console.error(e);
+          errorEl.textContent = "Error: " + e.message;
+        } finally {
+          setLoading(false);
+        }
+      });
+    </script>
+  </body>
+</html>
